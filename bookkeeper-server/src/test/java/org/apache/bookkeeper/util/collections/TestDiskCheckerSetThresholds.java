@@ -103,7 +103,10 @@ public class TestDiskCheckerSetThresholds {
 
 
 
-    // Extend the class DiskChecker to override the sut-method to be accessible from the outside, for testing purpose.
+    // Extend the class DiskChecker to let the sut-methods to be accessible from this package, just for testing purpose.
+    // This solution makes the test be valid only until the real class remains unchanged. 
+    // The decision is taken only for educational purpose and to apply the methods learnt in classes, 
+    // it should not be intended to be usable in "real" testing environments.
     public class DiskCheckerExtended extends DiskChecker{
 
 

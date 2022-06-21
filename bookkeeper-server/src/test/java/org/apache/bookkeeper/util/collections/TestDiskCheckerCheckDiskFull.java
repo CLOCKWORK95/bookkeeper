@@ -19,12 +19,11 @@
 package org.apache.bookkeeper.util.collections;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.bookkeeper.util.DiskChecker;
 import org.apache.bookkeeper.util.IOUtils;
@@ -39,56 +38,100 @@ import org.slf4j.LoggerFactory;
 @RunWith( Parameterized.class )
 public class TestDiskCheckerCheckDiskFull {
 
-    private static ArrayList<File>      tempDirs = new ArrayList<>();
+    private static ArrayList<File>      directories = new ArrayList<>();
 
     // Test Parameters
-    private float                       diskUsageThreshold = 0.99f;
-    private float                       diskUsageWarnThreshold = 0.99f;
-	private Object                      expectedResult;
+    private File                        dir;
+    private Object                      expectedResult;
 	
     // Data Structure instances
 	private DiskCheckerExtended         diskChecker;
+    private float                       diskUsageThreshold = 0.99f;
+    private float                       diskUsageWarnThreshold = 0.99f;
+    private long                        usableDiskSpace;
+    private long                        totalDiskSpace;
+
+
 
     @Parameterized.Parameters
 	public static Collection<Object[]> testParameters() throws Exception {
 		return Arrays.asList(new Object[][] {
 
 			//  Test Suite (1)
-            //  { dir,   expectedResult }
-            { 0.0,     Exception.class },
-            { 0.2,     Exception.class },
-            { 0.8,     Exception.class },
-            { 1.0,     Exception.class },
-            { 0.2,     Exception.class }
+            // pensa bene ai parametri!
+            //  { dir,      diskUsageThreshold,     diskWarnUsageThreshold,     expectedResult }
+            { getDir( "Diskchecker", null ),        Exception.class },
+            { getDir( "testFile", null ),           Exception.class },
+            { getDir( "invalidPath", null ),        Exception.class },
+            { getDir( "Diskchecker", null ),        Exception.class },
+            { getDir( "Diskchecker", null ),        Exception.class }
 
 		});
 	}
+
+
+
+    public TestDiskCheckerCheckDiskFull( File dir, Object expectedResult ){
+        this.dir = dir;
+        this.expectedResult = expectedResult;
+    }
     
-    
+
     
     @Before
-    public void configure(){
+    public void configure() throws IOException {
+
         diskChecker = new DiskCheckerExtended( diskUsageThreshold, diskUsageWarnThreshold );
+        
+        File directory = addTempDir("DiskChecker", null);
+        
+        File file = addTempFileWithWrite( directory, "testFile" );
+
+        totalDiskSpace = file.getTotalSpace();
+
+        usableDiskSpace = file.getUsableSpace();
+
+
     }
+
 
 
     @Test //(expected = DiskOutOfSpaceException.class)
     public void testCheckDiskFull() throws IOException {
-        File file = createTempDir("DiskCheck", "test");
-        long usableSpace = file.getUsableSpace();
-        long totalSpace = file.getTotalSpace();
-        float threshold = minMaxThreshold( ( 1f - ( (float) usableSpace / (float) totalSpace ) ) - ( 1.0f - diskUsageThreshold ) );
+        
+        float threshold = minMaxThreshold( ( 1f - ( (float) usableDiskSpace / (float) totalDiskSpace ) ) - ( 1.0f - diskUsageThreshold ) );
+        diskChecker.setDiskSpaceThreshold( threshold, threshold );
+        try{
 
-        diskChecker.setDiskSpaceThreshold(threshold, threshold);
-        diskChecker.checkDiskFull(file);
+            diskChecker.checkDiskFull( dir );
+            
+        } catch( Exception e ){
+
+            Assert.assertEquals( expectedResult, e.getClass() );
+
+        }
+        
     }
 
 
-
-    private static File createTempDir( String prefix, String suffix ) throws IOException {
-        File dir = IOUtils.createTempDir(prefix, suffix);
-        tempDirs.add(dir);
+    private static File getDir( String prefix, String suffix ) throws IOException {
+        File dir = IOUtils.createTempDir( prefix, suffix );
         return dir;
+    }
+
+
+    private static File addTempDir( String prefix, String suffix ) throws IOException {
+        File dir = IOUtils.createTempDir( prefix, suffix );
+        directories.add( dir );
+        return dir;
+    }
+
+    private static File addTempFileWithWrite( File directory , String filename ) throws IOException {
+        File placeHolder = new File( directory, filename );      
+        FileOutputStream placeHolderStream = new FileOutputStream( placeHolder );
+        placeHolderStream.write( new byte[ 100 * 1024 ] );
+        placeHolderStream.close();
+        return placeHolder;
     }
 
 
@@ -103,7 +146,10 @@ public class TestDiskCheckerCheckDiskFull {
 
 
 
-    // Extend the class DiskChecker to let the sut-methods to be accessible from the outside, for testing purpose.
+    // Extend the class DiskChecker to let the sut-methods to be accessible from this package, just for testing purpose.
+    // This solution makes the test be valid only until the real class remains unchanged. 
+    // The decision is taken only for educational purpose and to apply the methods learnt in classes, 
+    // it should not be intended to be usable in "real" testing environments.
     public class DiskCheckerExtended extends DiskChecker{
 
         private final Logger LOG = LoggerFactory.getLogger( DiskCheckerExtended.class );
