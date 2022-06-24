@@ -21,7 +21,6 @@ package org.apache.bookkeeper.util.collections;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -39,8 +38,6 @@ import org.slf4j.LoggerFactory;
 
 @RunWith( Parameterized.class )
 public class TestDiskCheckerCheckDiskFull {
-
-    private static ArrayList<File>      directories = new ArrayList<>();
 
     // Test Parameters
     private File                        dir;
@@ -80,7 +77,6 @@ public class TestDiskCheckerCheckDiskFull {
     
     @Before
     public void configure() throws IOException {
-
         this.diskChecker = new DiskCheckerExtended( this.diskUsageThreshold, this.diskUsageWarnThreshold );
         this.diskChecker.setDiskSpaceThresholdVisible( diskUsageThreshold, diskUsageWarnThreshold );
     } 
@@ -93,7 +89,6 @@ public class TestDiskCheckerCheckDiskFull {
         try{
             
             float usedSpace = diskChecker.checkDiskFullVisible( dir );
-
             Assert.assertEquals( expectedResult, ( usedSpace > 0f && usedSpace < 1f ) );
             
         } catch( Exception e ){
@@ -112,7 +107,6 @@ public class TestDiskCheckerCheckDiskFull {
         FileOutputStream placeHolderStream = new FileOutputStream( placeHolder );
         placeHolderStream.write( new byte[ 100 * 1024 ] );
         placeHolderStream.close();
-        directories.add(dir);
         return dir;
     }
 
