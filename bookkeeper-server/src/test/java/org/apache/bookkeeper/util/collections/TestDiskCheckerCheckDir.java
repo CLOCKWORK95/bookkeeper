@@ -20,7 +20,6 @@ package org.apache.bookkeeper.util.collections;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.IllegalArgumentException;
 import java.util.Arrays;
 import java.util.Collection;
 
