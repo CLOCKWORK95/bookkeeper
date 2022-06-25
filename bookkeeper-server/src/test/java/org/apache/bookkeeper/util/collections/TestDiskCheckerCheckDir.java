@@ -20,6 +20,7 @@ package org.apache.bookkeeper.util.collections;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.IllegalArgumentException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -52,6 +53,7 @@ public class TestDiskCheckerCheckDir {
         return Arrays.asList( new Object[][]{
             // dirpath      isReadable      isWritable      isDirectory     expectedResult
             // Test Suite (1)
+            {    null,          true,       true,       true,       NullPointerException.class },
             {   "checkdir",     true,       true,       true,       true },
             {   "checkdir",     false,      true,       true,       DiskErrorException.class },
             {   "checkdir",     true,       false,      true,       DiskErrorException.class },
@@ -73,13 +75,17 @@ public class TestDiskCheckerCheckDir {
 
     @Before 
     public void configure() throws IOException {    
-        diskChecker = new DiskChecker(0.99f, 0.99f);
+        diskChecker = new DiskChecker( 0.99f, 0.99f );
         this.dir = directorySetup( this.dirPath );
 
     }
 
 
     public File directorySetup( String dirPath ) throws IOException {
+
+        if ( dirPath == null ) {
+            return null;
+        }
 
         File parent = IOUtils.createTempDir( dirPath, null );
         File dir = parent;
@@ -106,7 +112,7 @@ public class TestDiskCheckerCheckDir {
             Assert.assertTrue( used > 0f && used < 1f );
         } catch ( Exception e ){
             Assert.assertEquals( expectedResult, e.getClass() );
-        }
+        } 
     }
     
 
