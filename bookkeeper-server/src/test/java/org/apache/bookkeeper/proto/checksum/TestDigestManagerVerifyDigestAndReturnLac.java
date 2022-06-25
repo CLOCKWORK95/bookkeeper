@@ -37,39 +37,37 @@ import io.netty.buffer.UnpooledByteBufAllocator;
 
 
 @RunWith( Parameterized.class )
-public class TestDigestManagerVerifyDigestAndReturnData {
+public class TestDigestManagerVerifyDigestAndReturnLac {
 
     // Test Parameters
     private DigestType              digestType;
     private long                    ledgerId;
-    private long                    entryId;
+    private long                    lac;
     private ByteBuf                 dataReceived;
     private Object                  expectedResult;
 
     // Data Structures
     private DigestManager           digestManager;
-    private static final String     text = "test-payload";
 
 
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() throws GeneralSecurityException{
         return Arrays.asList( new Object[][]{
-            // digestType       ledgerId    entryId             byteBuffer              expectedResult
+            // digestType       ledgerId    lac             dataReceived byte buffer              expectedResult
             // Test suite (1)
-            { DigestType.HMAC,      1,      0,      dataReceived( 1, 0, DigestType.HMAC ),        payloadBuffer() },
+            { DigestType.HMAC,      1,     -1,      dataReceived( 1, (long)-1, DigestType.HMAC ),     (long)-1 },
             { DigestType.CRC32,     1,      0,      dataReceived( 1, 0, DigestType.DUMMY ),       BKDigestMatchException.class },
-            { DigestType.CRC32C,    1,      0,      dataReceived( 1, 1, DigestType.CRC32C ),      BKDigestMatchException.class },
+            { DigestType.CRC32C,    1,      1,      dataReceived( 1, 1, DigestType.CRC32C ),      (long) 1 },
             { DigestType.DUMMY,     1,      0,      dataReceived( 0, 0, DigestType.DUMMY ),       BKDigestMatchException.class },
-            //{ DigestType.HMAC,      1,      0,      dataReceivedEmpty(),                                                            BKDigestMatchException.class },
-            { DigestType.CRC32,     1,      0,      null,                                                                           NullPointerException.class }
+            { DigestType.CRC32,     1,      0,      null,                                                               NullPointerException.class }
         } );
     }
 
 
-    public TestDigestManagerVerifyDigestAndReturnData( DigestType digestType, long ledgerId, long entryId, ByteBuf dataReceived, Object expectedResult ){
+    public TestDigestManagerVerifyDigestAndReturnLac( DigestType digestType, long ledgerId, long lac, ByteBuf dataReceived, Object expectedResult ){
         this.digestType = digestType;
         this.ledgerId = ledgerId;
-        this.entryId = entryId;
+        this.lac = lac;
         this.dataReceived = dataReceived;
         this.expectedResult = expectedResult;
     }
@@ -84,33 +82,20 @@ public class TestDigestManagerVerifyDigestAndReturnData {
     @Test
     public void testVerifyDigest(){
         try{
-            ByteBuf extractedResult = digestManager.verifyDigestAndReturnData( entryId, dataReceived );
+            long extractedResult = digestManager.verifyDigestAndReturnLac( dataReceived );
             Assert.assertEquals( expectedResult, extractedResult );
         } catch( Exception e ){
             Assert.assertEquals( expectedResult, e.getClass() );
         }
     }
 
-
     
-    private static ByteBuf dataReceived( int declaredLedgerId, int declaredEntryId, DigestType declaredDigestType ) throws GeneralSecurityException {
+    private static ByteBuf dataReceived( int declaredLedgerId, long lac, DigestType declaredDigestType ) throws GeneralSecurityException {
 		DigestManager   digest = DigestManager.instantiate( declaredLedgerId, "password".getBytes(), declaredDigestType, UnpooledByteBufAllocator.DEFAULT, false );     
-		ByteBuf         payload = payloadBuffer();
-        ByteBufList     byteBufList = digest.computeDigestAndPackageForSending( declaredEntryId, 0,  payload.readableBytes(), payload );
-		return ByteBufList.coalesce( byteBufList );
+        ByteBufList     byteBufList = digest.computeDigestAndPackageForSendingLac( lac );
+		return          byteBufList.getBuffer(0);
 	}
 
-    private static ByteBuf dataReceivedEmpty() throws GeneralSecurityException {
-		ByteBuf     emptyBuffer = Unpooled.buffer(0);
-		return      emptyBuffer;
-	}
-
-    private static ByteBuf payloadBuffer(){
-        byte[]  data = text.getBytes();
-        ByteBuf payloadBuffer = Unpooled.buffer(128);
-        payloadBuffer.writeBytes( data );
-        return  payloadBuffer;      
-    }
 
 
     
