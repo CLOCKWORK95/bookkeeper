@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.buffer.UnpooledByteBufAllocator;
 
 
@@ -42,7 +41,6 @@ public class TestDigestManagerVerifyDigestAndReturnLac {
     // Test Parameters
     private DigestType              digestType;
     private long                    ledgerId;
-    private long                    lac;
     private ByteBuf                 dataReceived;
     private Object                  expectedResult;
 
@@ -67,7 +65,6 @@ public class TestDigestManagerVerifyDigestAndReturnLac {
     public TestDigestManagerVerifyDigestAndReturnLac( DigestType digestType, long ledgerId, long lac, ByteBuf dataReceived, Object expectedResult ){
         this.digestType = digestType;
         this.ledgerId = ledgerId;
-        this.lac = lac;
         this.dataReceived = dataReceived;
         this.expectedResult = expectedResult;
     }
