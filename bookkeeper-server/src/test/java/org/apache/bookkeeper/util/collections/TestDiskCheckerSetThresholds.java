@@ -47,22 +47,22 @@ public class TestDiskCheckerSetThresholds {
 		return Arrays.asList(new Object[][] {
 
 			//  Test Suite (1)
-            //  { diskUsageThreshold,   diskUsageWarnThreshold,   expectedResult }
-            { 0.0,      0.0,     IllegalArgumentException.class },
-            { 0.2,      0.2,     expected( (float) 0.2, (float) 0.2 ) },
-            { 0.8,      0.2,     expected( (float) 0.8, (float) 0.2 ) },
-            { 1.0,      1.0,     IllegalArgumentException.class },
-            { 0.2,      0.4,     IllegalArgumentException.class }
+            //  {diskUsageThreshold,   diskUsageWarnThreshold,   expectedResult}
+            {0.0,      0.0,     IllegalArgumentException.class},
+            {0.2,      0.2,     expected((float) 0.2, (float) 0.2)},
+            {0.8,      0.2,     expected((float) 0.8, (float) 0.2)},
+            {1.0,      1.0,     IllegalArgumentException.class},
+            {0.2,      0.4,     IllegalArgumentException.class}
 
 		});
 	}
 	
 
-	public TestDiskCheckerSetThresholds( double diskUsageThreshold, double diskUsageWarnThreshold, Object expectedResult ){
+	public TestDiskCheckerSetThresholds(double diskUsageThreshold, double diskUsageWarnThreshold, Object expectedResult){
         this.diskUsageThreshold = (float) diskUsageThreshold;
         this.diskUsageWarnThreshold = (float) diskUsageWarnThreshold;
         this.expectedResult = expectedResult;
-        this.diskChecker = new DiskCheckerExtended( (float) 0.8, (float) 0.6 );
+        this.diskChecker = new DiskCheckerExtended((float) 0.8, (float) 0.6);
 	}
 
 
@@ -71,8 +71,8 @@ public class TestDiskCheckerSetThresholds {
 	public void configure() throws GeneralSecurityException {
 
         values = new ArrayList<>();
-        values.add( diskUsageThreshold );
-        values.add( diskUsageWarnThreshold  );
+        values.add(diskUsageThreshold);
+        values.add(diskUsageWarnThreshold );
 
 	}
 
@@ -82,24 +82,24 @@ public class TestDiskCheckerSetThresholds {
 
 		try {
 
-            diskChecker.setDiskSpaceThresholdExtended( diskUsageThreshold, diskUsageWarnThreshold );
+            diskChecker.setDiskSpaceThresholdExtended(diskUsageThreshold, diskUsageWarnThreshold);
 
-            Assert.assertEquals( expectedResult, values );
+            Assert.assertEquals(expectedResult, values);
 
-		} catch ( Exception e ) {
-			Assert.assertEquals( expectedResult, e.getClass() );
+		} catch (Exception e){
+			Assert.assertEquals(expectedResult, e.getClass());
 		}
       
 	}
 
 
 
-    private static ArrayList<Float> expected( float diskUsageThreshold, float diskUsageWarnThreshold ){
+    private static ArrayList<Float> expected(float diskUsageThreshold, float diskUsageWarnThreshold){
         ArrayList<Float> expected = new ArrayList<>();
-        expected.add( diskUsageThreshold );
-        expected.add( diskUsageWarnThreshold );
+        expected.add(diskUsageThreshold);
+        expected.add(diskUsageWarnThreshold);
         return expected;
-    }
+   }
 
 
 
@@ -116,7 +116,7 @@ public class TestDiskCheckerSetThresholds {
 
         public DiskCheckerExtended(float threshold, float warnThreshold) {
             super(threshold, warnThreshold);
-        }
+       }
 
 
         private void validateThreshold(float diskSpaceThreshold, float diskSpaceWarnThreshold) {
@@ -124,16 +124,16 @@ public class TestDiskCheckerSetThresholds {
                 throw new IllegalArgumentException("Disk space threashold: "
                         + diskSpaceThreshold + " and warn threshold: " + diskSpaceWarnThreshold
                         + " are not valid. Should be > 0 and < 1 and diskSpaceThreshold >= diskSpaceWarnThreshold");
-            }
-        }
+           }
+       }
 
         
-        public void setDiskSpaceThresholdExtended( float diskSpaceThreshold, float diskUsageWarnThreshold ) {
+        public void setDiskSpaceThresholdExtended(float diskSpaceThreshold, float diskUsageWarnThreshold){
             validateThreshold(diskSpaceThreshold, diskUsageWarnThreshold);
             this.diskUsageThreshold = diskSpaceThreshold;
             this.diskUsageWarnThreshold = diskUsageWarnThreshold;
-        }
-    }
+       }
+   }
 
 
 

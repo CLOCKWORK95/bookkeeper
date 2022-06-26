@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-@RunWith( Parameterized.class )
+@RunWith(Parameterized.class)
 public class TestDiskCheckerCheckDir {
 
     // Test Parameters
@@ -49,58 +49,58 @@ public class TestDiskCheckerCheckDir {
 
     @Parameterized.Parameters
     public static Collection<Object[]> parameters(){
-        return Arrays.asList( new Object[][]{
+        return Arrays.asList(new Object[][]{
             // dirpath      isReadable      isWritable      isDirectory     expectedResult
             // Test Suite (1)
-            {    null,          true,       true,       true,       NullPointerException.class },
-            {   "checkdir",     true,       true,       true,       true },
-            {   "checkdir",     false,      true,       true,       DiskErrorException.class },
-            {   "checkdir",     true,       false,      true,       DiskErrorException.class },
-            {   "checkdir",     true,       true,       false,      DiskErrorException.class }
+            {null,          true,       true,       true,       NullPointerException.class},
+            {"checkdir",     true,       true,       true,       true},
+            {"checkdir",     false,      true,       true,       DiskErrorException.class},
+            {"checkdir",     true,       false,      true,       DiskErrorException.class},
+            {"checkdir",     true,       true,       false,      DiskErrorException.class}
 
-        });
-    }
+       });
+   }
 
 
-    public TestDiskCheckerCheckDir( String dirPath, boolean isReadable, boolean isWritable, boolean isDirectory, Object expectedResult ){
+    public TestDiskCheckerCheckDir(String dirPath, boolean isReadable, boolean isWritable, boolean isDirectory, Object expectedResult){
         this.dirPath = dirPath;
         this.isReadable = isReadable;
         this.isWritable = isWritable;
         this.isDirectory = isDirectory;
         this.expectedResult = expectedResult;
-    }
+   }
 
 
 
     @Before 
-    public void configure() throws IOException {    
-        diskChecker = new DiskChecker( 0.99f, 0.99f );
-        this.dir = directorySetup( this.dirPath );
+    public void configure() throws IOException {   
+        diskChecker = new DiskChecker(0.99f, 0.99f);
+        this.dir = directorySetup(this.dirPath);
 
-    }
+   }
 
 
-    public File directorySetup( String dirPath ) throws IOException {
+    public File directorySetup(String dirPath) throws IOException {
 
-        if ( dirPath == null ) {
+        if (dirPath == null) {
             return null;
-        }
+       }
 
-        File parent = IOUtils.createTempDir( dirPath, null );
+        File parent = IOUtils.createTempDir(dirPath, null);
         File dir = parent;
-        if ( !this.isDirectory ) {
-            File child = File.createTempFile( dirPath, null, parent );
+        if (!this.isDirectory) {
+            File child = File.createTempFile(dirPath, null, parent);
             dir = child;
-        } 
-        if ( !this.isReadable ){
-            dir.setReadable( false );
-        }
-        if ( !this.isWritable ){
-            dir.setWritable( false );
-        }
+       } 
+        if (!this.isReadable){
+            dir.setReadable(false);
+       }
+        if (!this.isWritable){
+            dir.setWritable(false);
+       }
         return dir;
 
-    }
+   }
 
 
 
@@ -108,11 +108,11 @@ public class TestDiskCheckerCheckDir {
     public void testCheckDir(){
         try{
             float used = diskChecker.checkDir(dir);
-            Assert.assertTrue( used > 0f && used < 1f );
-        } catch ( Exception e ){
-            Assert.assertEquals( expectedResult, e.getClass() );
-        } 
-    }
+            Assert.assertTrue(used > 0f && used < 1f);
+       } catch (Exception e){
+            Assert.assertEquals(expectedResult, e.getClass());
+       } 
+   }
     
 
 }

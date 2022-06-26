@@ -36,7 +36,7 @@ import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RunWith( Parameterized.class )
+@RunWith(Parameterized.class)
 public class TestDiskCheckerCheckDiskFull {
 
     // Test Parameters
@@ -54,32 +54,32 @@ public class TestDiskCheckerCheckDiskFull {
 		return Arrays.asList(new Object[][] {
 
 			//  Test Suite (1)
-            //  { dirPath,      diskUsageThreshold,     diskWarnUsageThreshold,     expectedResult }
-            { getDir("Diskchecker"),            0.01f,     0.01f,           DiskOutOfSpaceException.class },
-            { getDir("testFile"),               0.99f,     0.99f,           true },
-            { getDirInvalid("invalidInput"),    0.99f,     0.99f,           false },
-            { getDir("Diskchecker"),            0.99f,     0.01f,           DiskWarnThresholdException.class },
-            { getDir(null),                     0.99f,     0.99f,           false }
+            //  {dirPath,      diskUsageThreshold,     diskWarnUsageThreshold,     expectedResult}
+            {getDir("Diskchecker"),            0.01f,     0.01f,           DiskOutOfSpaceException.class},
+            {getDir("testFile"),               0.99f,     0.99f,           true},
+            {getDirInvalid("invalidInput"),    0.99f,     0.99f,           false},
+            {getDir("Diskchecker"),            0.99f,     0.01f,           DiskWarnThresholdException.class},
+            {getDir(null),                     0.99f,     0.99f,           false}
 
 		});
 	}
 
 
 
-    public TestDiskCheckerCheckDiskFull( File dir, float diskUsageThreshold, float diskUsageWarnThreshold, Object expectedResult ){
+    public TestDiskCheckerCheckDiskFull(File dir, float diskUsageThreshold, float diskUsageWarnThreshold, Object expectedResult){
         this.dir = dir;
         this.diskUsageThreshold = diskUsageThreshold;
         this.diskUsageWarnThreshold = diskUsageWarnThreshold;
         this.expectedResult = expectedResult;
-    }
+   }
     
 
     
     @Before
     public void configure() throws IOException {
-        this.diskChecker = new DiskCheckerExtended( this.diskUsageThreshold, this.diskUsageWarnThreshold );
-        this.diskChecker.setDiskSpaceThresholdVisible( diskUsageThreshold, diskUsageWarnThreshold );
-    } 
+        this.diskChecker = new DiskCheckerExtended(this.diskUsageThreshold, this.diskUsageWarnThreshold);
+        this.diskChecker.setDiskSpaceThresholdVisible(diskUsageThreshold, diskUsageWarnThreshold);
+   } 
 
 
 
@@ -88,42 +88,42 @@ public class TestDiskCheckerCheckDiskFull {
         
         try{
             
-            float usedSpace = diskChecker.checkDiskFullVisible( dir );
-            Assert.assertEquals( expectedResult, ( usedSpace > 0f && usedSpace < 1f ) );
+            float usedSpace = diskChecker.checkDiskFullVisible(dir);
+            Assert.assertEquals(expectedResult, (usedSpace > 0f && usedSpace < 1f));
             
-        } catch( Exception e ){
+       } catch(Exception e){
 
-            Assert.assertEquals( expectedResult, e.getClass() );
+            Assert.assertEquals(expectedResult, e.getClass());
 
-        }
+       }
         
-    }
+   }
 
 
 
-    private static File createTempDir( String prefix, String suffix ) throws IOException {
-        File dir = IOUtils.createTempDir( prefix, suffix );
-        File placeHolder = File.createTempFile( "testFile", null, dir );      
-        FileOutputStream placeHolderStream = new FileOutputStream( placeHolder );
-        placeHolderStream.write( new byte[ 100 * 1024 ] );
+    private static File createTempDir(String prefix, String suffix) throws IOException {
+        File dir = IOUtils.createTempDir(prefix, suffix);
+        File placeHolder = File.createTempFile("testFile", null, dir);      
+        FileOutputStream placeHolderStream = new FileOutputStream(placeHolder);
+        placeHolderStream.write(new byte[ 100 * 1024 ]);
         placeHolderStream.close();
         return dir;
-    }
+   }
 
 
  
-    private static Object getDir( Object dirPath ) throws IOException {
-        if ( dirPath == null ) return null;
-        File dir = createTempDir( (String) dirPath, "test" );
+    private static Object getDir(Object dirPath) throws IOException {
+        if (dirPath == null) return null;
+        File dir = createTempDir((String) dirPath, "test");
         return dir;
 
-    } 
+   } 
 
-    private static Object getDirInvalid( Object dirPath ) throws IOException{
+    private static Object getDirInvalid(Object dirPath) throws IOException{
         // returns a File Object which is not a directory, but a temporary file with not declared parent dir.
-        File dir = new File( (String) dirPath );
+        File dir = new File((String) dirPath);
         return dir;
-    }
+   }
 
 
 
@@ -134,7 +134,7 @@ public class TestDiskCheckerCheckDiskFull {
     // it should not be intended to be usable in "real" testing environments.
     public class DiskCheckerExtended extends DiskChecker{
 
-        private final Logger LOG = LoggerFactory.getLogger( DiskCheckerExtended.class );
+        private final Logger LOG = LoggerFactory.getLogger(DiskCheckerExtended.class);
 
         private float diskUsageThreshold;
         private float diskUsageWarnThreshold;
@@ -142,7 +142,7 @@ public class TestDiskCheckerCheckDiskFull {
 
         public DiskCheckerExtended(float threshold, float warnThreshold) {
             super(threshold, warnThreshold);
-        }
+       }
 
 
         private void validateThreshold(float diskSpaceThreshold, float diskSpaceWarnThreshold) {
@@ -150,14 +150,14 @@ public class TestDiskCheckerCheckDiskFull {
                 throw new IllegalArgumentException("Disk space threashold: "
                         + diskSpaceThreshold + " and warn threshold: " + diskSpaceWarnThreshold
                         + " are not valid. Should be > 0 and < 1 and diskSpaceThreshold >= diskSpaceWarnThreshold");
-            }
-        }
+           }
+       }
 
 
-        public float checkDiskFullVisible( File dir ) throws DiskOutOfSpaceException, DiskWarnThresholdException {
+        public float checkDiskFullVisible(File dir) throws DiskOutOfSpaceException, DiskWarnThresholdException {
             if (null == dir) {
                 return 0f;
-            }
+           }
             if (dir.exists()) {
                 long usableSpace = dir.getUsableSpace();
                 long totalSpace = dir.getTotalSpace();
@@ -168,7 +168,7 @@ public class TestDiskCheckerCheckDiskFull {
                             dir, usableSpace, used, diskUsageThreshold);
                     throw new DiskOutOfSpaceException("Space left on device "
                             + usableSpace + " Used space fraction:" + used + " > threshold " + diskUsageThreshold, used);
-                }
+               }
                 // Warn should be triggered only if disk usage threshold doesn't trigger first.
                 if (used > diskUsageWarnThreshold) {
                     LOG.warn("Space left on device {} : {}, Used space fraction: {} > WarnThreshold {}.",
@@ -176,18 +176,18 @@ public class TestDiskCheckerCheckDiskFull {
                     throw new DiskWarnThresholdException("Space left on device:"
                             + usableSpace + " Used space fraction:" + used + " > WarnThreshold:" + diskUsageWarnThreshold,
                             used);
-                }
+               }
                 return used;
-            } else {
-                return checkDiskFullVisible( dir.getParentFile() );
-            }
-        }
+           } else {
+                return checkDiskFullVisible(dir.getParentFile());
+           }
+       }
         
-        public void setDiskSpaceThresholdVisible( float diskSpaceThreshold, float diskUsageWarnThreshold ) {
+        public void setDiskSpaceThresholdVisible(float diskSpaceThreshold, float diskUsageWarnThreshold) {
             validateThreshold(diskSpaceThreshold, diskUsageWarnThreshold);
             this.diskUsageThreshold = diskSpaceThreshold;
             this.diskUsageWarnThreshold = diskUsageWarnThreshold;
-        }
-    }
+       }
+   }
 
 }

@@ -56,17 +56,17 @@ public class TestDigestManagerComputeDigestAndPackage {
 		return Arrays.asList(new Object[][] {
 
 			//  Test Suite (1)
-            //  { digest type , lastAddConfirmed,     entryID,    length,     data,     useV2Protocol,   expectedResult }
-            { DigestType.HMAC,      1, 2, 1,    getEntry(1),    true,        expectedHeader(1, 2, 1, 1)    },
-            { DigestType.CRC32,     0, 0, 0,    getEntry(0),    true,        expectedHeader(1, 0, 0, 0)    },
-            { DigestType.CRC32C,   -1, 0, 0,                  null,     false,      NullPointerException.class },
-            { DigestType.DUMMY,     0, 1, -1,   getEntry(-1),           false,       expectedHeader(1, 1, 0, -1 ) }
+            //  {digest type , lastAddConfirmed,     entryID,    length,     data,     useV2Protocol,   expectedResult }
+            {DigestType.HMAC,      1, 2, 1,    getEntry(1),    true,        expectedHeader(1, 2, 1, 1)    },
+            {DigestType.CRC32,     0, 0, 0,    getEntry(0),    true,        expectedHeader(1, 0, 0, 0)    },
+            {DigestType.CRC32C,   -1, 0, 0,                  null,     false,      NullPointerException.class },
+            {DigestType.DUMMY,     0, 1, -1,   getEntry(-1),           false,       expectedHeader(1, 1, 0, -1) }
 
 		});
 	}
 	
 
-	public TestDigestManagerComputeDigestAndPackage( DigestType digestType, long lastAddConfirmed, long entryId, long length,  ByteBuf data, boolean useV2Protocol, Object expectedResult ){
+	public TestDigestManagerComputeDigestAndPackage(DigestType digestType, long lastAddConfirmed, long entryId, long length,  ByteBuf data, boolean useV2Protocol, Object expectedResult){
 		this.digestType = digestType;
         TestDigestManagerComputeDigestAndPackage.lastAddConfirmed = lastAddConfirmed;
 		TestDigestManagerComputeDigestAndPackage.entryId = entryId;
@@ -83,57 +83,57 @@ public class TestDigestManagerComputeDigestAndPackage {
 
 
 	@Test
-	public void testComputeDigestAndPackage() {
+	public void testComputeDigestAndPackage(){
 
 		try {
-			ByteBufList sut = digestManager.computeDigestAndPackageForSending( entryId, lastAddConfirmed, length, data );
+			ByteBufList sut = digestManager.computeDigestAndPackageForSending(entryId, lastAddConfirmed, length, data);
             ArrayList<Long> header = new ArrayList<>();
             int i = 0;
-            while ( i < 4 ) {
+            while (i < 4){
                 try{
                     long component = sut.getBuffer(0).readLong();
                     header.add(component);
                     i++;
-                }catch ( IndexOutOfBoundsException e ){
+                }catch (IndexOutOfBoundsException e){
                     break;
                 }
             }
             // Assert that the header of the package is consistent to the input informations.
-            Assert.assertEquals( expectedResult, header );			
+            Assert.assertEquals(expectedResult, header);			
 
-            Assert.assertEquals( data.readableBytes(), sut.getBuffer(1).readableBytes() );
+            Assert.assertEquals(data.readableBytes(), sut.getBuffer(1).readableBytes());
 
 
-		} catch ( Exception e ) {
-			Assert.assertEquals( expectedResult, e.getClass() );
+		} catch (Exception e){
+			Assert.assertEquals(expectedResult, e.getClass());
 		}
       
 	}
 
 
-    private static ByteBuf getEntry( long length ){
+    private static ByteBuf getEntry(long length){
         
         try {
             byte[] entryPayload = new byte[ (int) length ];
             ByteBuf validEntry = Unpooled.buffer(512);
-            validEntry.writeBytes( entryPayload );
+            validEntry.writeBytes(entryPayload);
             return validEntry;
-        } catch ( NegativeArraySizeException e ){
-            byte[] entryPayload = new byte[ 0 ];
+        } catch (NegativeArraySizeException e){
+            byte[] entryPayload = new byte[0];
             ByteBuf validEntry = Unpooled.buffer(512);
-            validEntry.writeBytes( entryPayload );
+            validEntry.writeBytes(entryPayload);
             return validEntry;
         }
 
     }
 
 
-    private static ArrayList<Long> expectedHeader( long ledgerId, long entryId, long lastAddConfirmed, long length ){
+    private static ArrayList<Long> expectedHeader(long ledgerId, long entryId, long lastAddConfirmed, long length){
         ArrayList<Long> expectedHeader = new ArrayList<>();
-        expectedHeader.add( ledgerId );
-        expectedHeader.add( entryId );
-        expectedHeader.add( lastAddConfirmed );
-        expectedHeader.add( length );
+        expectedHeader.add(ledgerId);
+        expectedHeader.add(entryId);
+        expectedHeader.add(lastAddConfirmed);
+        expectedHeader.add(length);
         return expectedHeader;
     }
 
