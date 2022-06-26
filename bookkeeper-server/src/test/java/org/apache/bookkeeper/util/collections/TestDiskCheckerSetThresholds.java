@@ -114,6 +114,15 @@ public class TestDiskCheckerSetThresholds {
         private float diskUsageWarnThreshold;
 
 
+        public float getDiskUsageWarnThreshold() {
+            return diskUsageWarnThreshold;
+        }
+        
+        public float getDiskUsageThreshold() {
+            return diskUsageThreshold;
+        }
+
+
         public DiskCheckerExtended(float threshold, float warnThreshold) {
             super(threshold, warnThreshold);
        }
