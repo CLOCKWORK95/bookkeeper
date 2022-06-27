@@ -24,9 +24,6 @@
   </parent>
   <artifactId>bookkeeper-server</artifactId>
   <name>Apache BookKeeper :: Server</name>
-  <properties>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../jacoco-tests-report-aggregator/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.bookkeeper</groupId>
@@ -213,6 +210,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -260,6 +258,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
+        <!--> COMMENT THE CONFIGURATIONS OF SUREFIRE PLUGIN TO MAKE JACOCO WORK CORRECTLY
         <configuration>
           <trimStackTrace>false</trimStackTrace>
           <properties>
@@ -269,6 +268,7 @@
             </property>
           </properties>
         </configuration>
+        <-->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -328,26 +328,6 @@
                 </configuration>
               </execution>
             </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <!-- test profiles -->
-    <profile>
-      <id>skipBookKeeperServerTests</id>
-      <activation>
-        <property>
-          <name>skipBookKeeperServerTests</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <skipTests>true</skipTests>
-            </configuration>
           </plugin>
         </plugins>
       </build>
