@@ -57,10 +57,10 @@ public class TestDigestManagerComputeDigestAndPackage {
 
 			//  Test Suite (1)
             //  {digest type , lastAddConfirmed,     entryID,    length,     data,     useV2Protocol,   expectedResult }
-            {DigestType.HMAC,      1, 2, 1,    getEntry(1),    true,        expectedHeader(1, 2, 1, 1)    },
-            {DigestType.CRC32,     0, 0, 0,    getEntry(0),    true,        expectedHeader(1, 0, 0, 0)    },
-            {DigestType.CRC32C,   -1, 0, 0,                  null,     false,      NullPointerException.class },
-            {DigestType.DUMMY,     0, 1, -1,   getEntry(-1),           false,       expectedHeader(1, 1, 0, -1) }
+            {DigestType.HMAC,      1, 2, 1,     getEntry(1),    true,        expectedHeader(1, 2, 1, 1)    },
+            {DigestType.CRC32,     0, 0, 0,     getEntry(0),    true,        expectedHeader(1, 0, 0, 0)    },
+            {DigestType.CRC32C,   -1, 0, 0,     null,                   false,      NullPointerException.class },
+            {DigestType.DUMMY,     0, 1, -1,    getEntry(-1),           false,       expectedHeader(1, 1, 0, -1) }
 
 		});
 	}

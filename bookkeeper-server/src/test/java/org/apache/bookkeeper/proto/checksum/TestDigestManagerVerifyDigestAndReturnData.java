@@ -100,10 +100,6 @@ public class TestDigestManagerVerifyDigestAndReturnData {
 		return ByteBufList.coalesce(byteBufList);
 	}
 
-    /*private static ByteBuf dataReceivedEmpty() throws GeneralSecurityException {
-		ByteBuf     emptyBuffer = Unpooled.buffer(0);
-		return      emptyBuffer;
-	}*///
 
     private static ByteBuf payloadBuffer(){
         byte[]  data = text.getBytes();
