@@ -39,7 +39,6 @@ public class TestDiskCheckerSetThresholds {
 	private Object                      expectedResult;
 	
     // Data Structure instances
-	private DiskCheckerExtended         diskChecker;
     private ArrayList<Float>            values;
 
 	@Parameterized.Parameters
@@ -62,7 +61,6 @@ public class TestDiskCheckerSetThresholds {
         this.diskUsageThreshold = (float) diskUsageThreshold;
         this.diskUsageWarnThreshold = (float) diskUsageWarnThreshold;
         this.expectedResult = expectedResult;
-        this.diskChecker = new DiskCheckerExtended((float) 0.8, (float) 0.6);
 	}
 
 
@@ -82,8 +80,7 @@ public class TestDiskCheckerSetThresholds {
 
 		try {
 
-            diskChecker.setDiskSpaceThresholdExtended(diskUsageThreshold, diskUsageWarnThreshold);
-
+            new DiskChecker(diskUsageThreshold, diskUsageWarnThreshold);
             Assert.assertEquals(expectedResult, values);
 
 		} catch (Exception e){
@@ -102,7 +99,7 @@ public class TestDiskCheckerSetThresholds {
    }
 
 
-
+/* 
     // Extend the class DiskChecker to let the sut-methods to be accessible from this package, just for testing purpose.
     // This solution makes the test be valid only until the real class remains unchanged. 
     // The decision is taken only for educational purpose and to apply the methods learnt in classes, 
@@ -143,7 +140,7 @@ public class TestDiskCheckerSetThresholds {
             this.diskUsageWarnThreshold = diskUsageWarnThreshold;
        }
    }
-
+*/
 
 
 }  

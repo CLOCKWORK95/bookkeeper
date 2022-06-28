@@ -53,10 +53,10 @@ public class TestDiskCheckerCheckDir {
             // dirpath      isReadable      isWritable      isDirectory     expectedResult
             // Test Suite (1)
             {null,          true,       true,       true,       NullPointerException.class},
-            {"checkdir",     true,       true,       true,       true},
-            {"checkdir",     false,      true,       true,       DiskErrorException.class},
-            {"checkdir",     true,       false,      true,       DiskErrorException.class},
-            {"checkdir",     true,       true,       false,      DiskErrorException.class}
+            {"checkdir",    true,       true,       true,       true},
+            {"checkdir",    false,      true,       true,       DiskErrorException.class},
+            {"checkdir",    true,       false,      true,       DiskErrorException.class},
+            {"checkdir",    true,       true,       false,      DiskErrorException.class}
 
        });
    }
