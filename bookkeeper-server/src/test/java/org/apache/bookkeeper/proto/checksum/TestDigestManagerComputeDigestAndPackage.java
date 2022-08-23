@@ -142,7 +142,7 @@ public class TestDigestManagerComputeDigestAndPackage {
         byte[] entryPayload = new byte[ (int) length ];
         ByteBuf entry = Unpooled.buffer(512);
         entry.writeBytes(entryPayload);
-        ArrayList<ByteBuf> buffers = new ArrayList();
+        ArrayList<ByteBuf> buffers = new ArrayList<>();
         buffers.add(entry);
         CompositeByteBuf stuff = Unpooled.compositeBuffer(1);
         stuff.addComponents(true, buffers);
