@@ -18,7 +18,7 @@
  */
 
 package org.apache.bookkeeper.proto.checksum;
-
+import static io.netty.buffer.Unpooled.*;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import java.lang.NegativeArraySizeException;
@@ -55,13 +56,15 @@ public class TestDigestManagerComputeDigestAndPackage {
 	public static Collection<Object[]> testParameters() throws Exception {
 		return Arrays.asList(new Object[][] {
 
-			//  Test Suite (1)
+			//  Test Suite Minimale
             //  {digest type , lastAddConfirmed,     entryID,    length,     data,     useV2Protocol,   expectedResult }
-            {DigestType.HMAC,      1, 2, 1,     getEntry(1),    true,        expectedHeader(1, 2, 1, 1)    },
-            {DigestType.CRC32,     0, 0, 0,     getEntry(0),    true,        expectedHeader(1, 0, 0, 0)    },
-            {DigestType.CRC32C,   -1, 0, 0,     null,                   false,      NullPointerException.class },
-            {DigestType.DUMMY,     0, 1, -1,    getEntry(-1),           false,       expectedHeader(1, 1, 0, -1) }
-
+            {DigestType.HMAC,      1, 2, 1,     getEntry(1),    true,               expectedHeader(1, 2, 1, 1)    },
+            {DigestType.CRC32,     0, 0, 0,     getEntry(0),    true,               expectedHeader(1, 0, 0, 0)    },
+            {DigestType.CRC32C,   -1, 0, 0,     null,                   false,              NullPointerException.class },
+            {DigestType.DUMMY,     0, 1, -1,    getEntry(-1),           false,              expectedHeader(1, 1, 0, -1) },
+            // Control Flow Coverage
+            {DigestType.HMAC,      1, 2, 1,     getWrappingBuffer(1),    true,      expectedHeader(1, 2, 1, 1)    },
+            {DigestType.HMAC,      1, 2, 1,     getWrappingBufferCompositeInstance(1),    true,      expectedHeader(1, 2, 1, 1)    },
 		});
 	}
 	
@@ -125,6 +128,26 @@ public class TestDigestManagerComputeDigestAndPackage {
             return validEntry;
         }
 
+    }
+
+    private static ByteBuf getWrappingBuffer( long length ){
+        byte[] entryPayload = new byte[ (int) length ];
+        ByteBuf validEntry = Unpooled.buffer(512);
+        validEntry.writeBytes(entryPayload);
+        ByteBuf wrapperBuffer = wrappedBuffer( validEntry );
+        return wrapperBuffer;
+    }
+
+    private static ByteBuf getWrappingBufferCompositeInstance( long length ){
+        byte[] entryPayload = new byte[ (int) length ];
+        ByteBuf entry = Unpooled.buffer(512);
+        entry.writeBytes(entryPayload);
+        ArrayList<ByteBuf> buffers = new ArrayList();
+        buffers.add(entry);
+        CompositeByteBuf stuff = Unpooled.compositeBuffer(1);
+        stuff.addComponents(true, buffers);
+        ByteBuf wrapperBuffer = wrappedBuffer(stuff);
+        return wrapperBuffer;
     }
 
 

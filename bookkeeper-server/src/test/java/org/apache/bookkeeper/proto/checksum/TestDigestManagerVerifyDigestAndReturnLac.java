@@ -57,7 +57,9 @@ public class TestDigestManagerVerifyDigestAndReturnLac {
             {DigestType.CRC32,     1,      0,      dataReceived(1, 0, DigestType.DUMMY),       BKDigestMatchException.class},
             {DigestType.CRC32C,    1,      1,      dataReceived(1, 1, DigestType.CRC32C),      (long) 1},
             {DigestType.DUMMY,     1,      0,      dataReceived(0, 0, DigestType.DUMMY),       BKDigestMatchException.class},
-            {DigestType.CRC32,     1,      0,      null,                                                             NullPointerException.class}
+            {DigestType.CRC32,     1,      0,      null,                                                             NullPointerException.class},
+            // Control Flow Coverage
+            {DigestType.HMAC,      1,      1,      dataReceivedWrongPassword(1, (long)1, DigestType.HMAC),     BKDigestMatchException.class}
        });
    }
 
@@ -72,7 +74,7 @@ public class TestDigestManagerVerifyDigestAndReturnLac {
 
     @Before
     public void configure() throws GeneralSecurityException {
-        this.digestManager = DigestManager.instantiate(ledgerId, "password".getBytes(), digestType, UnpooledByteBufAllocator.DEFAULT, false);     
+        this.digestManager = DigestManager.instantiate(ledgerId, "password".getBytes(), digestType, UnpooledByteBufAllocator.DEFAULT, false); 
    }
 
 
@@ -92,6 +94,14 @@ public class TestDigestManagerVerifyDigestAndReturnLac {
         ByteBufList     byteBufList = digest.computeDigestAndPackageForSendingLac(lac);
 		return          byteBufList.getBuffer(0);
 	}
+
+    private static ByteBuf dataReceivedWrongPassword(int declaredLedgerId, long lac, DigestType declaredDigestType) throws GeneralSecurityException {
+		DigestManager   digest = DigestManager.instantiate(declaredLedgerId, "wrongPassword".getBytes(), declaredDigestType, UnpooledByteBufAllocator.DEFAULT, false);     
+        ByteBufList     byteBufList = digest.computeDigestAndPackageForSendingLac(lac);
+		return          byteBufList.getBuffer(0);
+	}
+
+
 
 
 
