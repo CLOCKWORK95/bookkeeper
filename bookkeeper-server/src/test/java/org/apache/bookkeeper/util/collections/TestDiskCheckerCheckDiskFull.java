@@ -27,11 +27,13 @@ import org.apache.bookkeeper.util.IOUtils;
 import org.apache.bookkeeper.util.DiskChecker;
 import org.apache.bookkeeper.util.DiskChecker.DiskOutOfSpaceException;
 import org.apache.bookkeeper.util.DiskChecker.DiskWarnThresholdException;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.apache.commons.io.FileUtils;
 
 @RunWith(Parameterized.class)
 public class TestDiskCheckerCheckDiskFull {
@@ -96,6 +98,11 @@ public class TestDiskCheckerCheckDiskFull {
         
    }
 
+   @After
+    public void tearDown() throws IOException {
+        this.diskChecker = new DiskChecker(diskUsageThreshold, diskUsageWarnThreshold);
+   } 
+
 
 
     private static File createTempDir(String prefix, String suffix) throws IOException {
@@ -120,9 +127,16 @@ public class TestDiskCheckerCheckDiskFull {
         // returns a File Object which is not a directory, but a temporary file with not declared parent dir.
         File dir = new File(".." + File.pathSeparator + "directory" );
         try{
-            dir.mkdir();
-            File f = new File(".." + File.pathSeparator + "directory" + File.pathSeparator + "file.txt" );
-            return f;
+            if (!dir.exists()){
+                File f = new File(".." + File.pathSeparator + "directory" + File.pathSeparator + "file.txt" );
+                return f;
+            } else{
+                FileUtils.deleteDirectory(dir);
+                dir.mkdir();
+                File f = new File(".." + File.pathSeparator + "directory" + File.pathSeparator + "file.txt" );
+                return f;
+            }
+            
         } catch( Exception e ){
             e.printStackTrace();
         }
