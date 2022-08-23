@@ -50,13 +50,14 @@ public class TestDiskCheckerCheckDiskFull {
 	public static Collection<Object[]> testParameters() throws Exception {
 		return Arrays.asList(new Object[][] {
 
-			//  Test Suite (1)
+			//  Test Suite Minimale
             //  {dirPath,      diskUsageThreshold,     diskWarnUsageThreshold,     expectedResult}
             {getDir("Diskchecker"),            0.01f,     0.01f,           DiskOutOfSpaceException.class},
             {getDir("testFile"),               0.99f,     0.99f,           true},
-            {getDirInvalid("invalidInput"),    0.99f,     0.99f,           true},
             {getDir("Diskchecker"),            0.99f,     0.01f,           DiskWarnThresholdException.class},
-            {getDir(null),                     0.99f,     0.99f,           NullPointerException.class}
+            {getDir(null),                     0.99f,     0.99f,           NullPointerException.class},
+            // Control Flow Coverage
+            {getFile(),                                 0.01f,     0.01f,           DiskOutOfSpaceException.class}
 
 		});
 	}
@@ -115,10 +116,17 @@ public class TestDiskCheckerCheckDiskFull {
 
    } 
 
-    private static Object getDirInvalid(Object dirPath) throws IOException{
+    private static Object getFile() throws IOException{
         // returns a File Object which is not a directory, but a temporary file with not declared parent dir.
-        File dir = new File((String) dirPath);
-        return dir;
+        File dir = new File(".." + File.pathSeparator + "directory" );
+        try{
+            dir.mkdir();
+            File f = new File(".." + File.pathSeparator + "directory" + File.pathSeparator + "file.txt" );
+            return f;
+        } catch( Exception e ){
+            e.printStackTrace();
+        }
+        return null;
    }
 
 

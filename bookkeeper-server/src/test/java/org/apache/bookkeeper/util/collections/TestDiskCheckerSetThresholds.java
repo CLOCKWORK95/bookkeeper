@@ -45,7 +45,7 @@ public class TestDiskCheckerSetThresholds {
 	public static Collection<Object[]> testParameters() throws Exception {
 		return Arrays.asList(new Object[][] {
 
-			//  Test Suite (1)
+			//  Test Suite Minimale
             //  {diskUsageThreshold,   diskUsageWarnThreshold,   expectedResult}
             {0.0,      0.0,     IllegalArgumentException.class},
             {0.2,      0.2,     expected((float) 0.2, (float) 0.2)},
@@ -97,50 +97,6 @@ public class TestDiskCheckerSetThresholds {
         expected.add(diskUsageWarnThreshold);
         return expected;
    }
-
-
-/* 
-    // Extend the class DiskChecker to let the sut-methods to be accessible from this package, just for testing purpose.
-    // This solution makes the test be valid only until the real class remains unchanged. 
-    // The decision is taken only for educational purpose and to apply the methods learnt in classes, 
-    // it should not be intended to be usable in "real" testing environments.
-    public class DiskCheckerExtended extends DiskChecker{
-
-
-        private float diskUsageThreshold;
-        private float diskUsageWarnThreshold;
-
-
-        public float getDiskUsageWarnThreshold() {
-            return diskUsageWarnThreshold;
-        }
-        
-        public float getDiskUsageThreshold() {
-            return diskUsageThreshold;
-        }
-
-
-        public DiskCheckerExtended(float threshold, float warnThreshold) {
-            super(threshold, warnThreshold);
-       }
-
-
-        private void validateThreshold(float diskSpaceThreshold, float diskSpaceWarnThreshold) {
-            if (diskSpaceThreshold <= 0 || diskSpaceThreshold >= 1 || diskSpaceWarnThreshold - diskSpaceThreshold > 1e-6) {
-                throw new IllegalArgumentException("Disk space threashold: "
-                        + diskSpaceThreshold + " and warn threshold: " + diskSpaceWarnThreshold
-                        + " are not valid. Should be > 0 and < 1 and diskSpaceThreshold >= diskSpaceWarnThreshold");
-           }
-       }
-
-        
-        public void setDiskSpaceThresholdExtended(float diskSpaceThreshold, float diskUsageWarnThreshold){
-            validateThreshold(diskSpaceThreshold, diskUsageWarnThreshold);
-            this.diskUsageThreshold = diskSpaceThreshold;
-            this.diskUsageWarnThreshold = diskUsageWarnThreshold;
-       }
-   }
-*/
 
 
 }  
