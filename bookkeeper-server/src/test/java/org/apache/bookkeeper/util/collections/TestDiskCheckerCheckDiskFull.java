@@ -27,13 +27,11 @@ import org.apache.bookkeeper.util.IOUtils;
 import org.apache.bookkeeper.util.DiskChecker;
 import org.apache.bookkeeper.util.DiskChecker.DiskOutOfSpaceException;
 import org.apache.bookkeeper.util.DiskChecker.DiskWarnThresholdException;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.apache.commons.io.FileUtils;
 
 @RunWith(Parameterized.class)
 public class TestDiskCheckerCheckDiskFull {
@@ -86,7 +84,7 @@ public class TestDiskCheckerCheckDiskFull {
     public void testCheckDiskFull() throws IOException {
         
         try{
-            
+            // checkDir is called because checkDiskFull is private method and it is invoked inside checkDir implementation.
             float usedSpace = diskChecker.checkDir(dir);
             Assert.assertEquals(expectedResult, (usedSpace > 0f && usedSpace < 1f));
             
@@ -98,10 +96,6 @@ public class TestDiskCheckerCheckDiskFull {
         
    }
 
-   @After
-    public void tearDown() throws IOException {
-        this.diskChecker = new DiskChecker(diskUsageThreshold, diskUsageWarnThreshold);
-   } 
 
 
 
@@ -124,18 +118,9 @@ public class TestDiskCheckerCheckDiskFull {
    } 
 
     private static Object getFile() throws IOException{
-        // returns a File Object which is not a directory, but a temporary file with not declared parent dir.
-        File dir = new File(".." + File.pathSeparator + "directory" );
         try{
-            if (!dir.exists()){
-                File f = new File(".." + File.pathSeparator + "directory" + File.pathSeparator + "file.txt" );
-                return f;
-            } else{
-                FileUtils.deleteDirectory(dir);
-                dir.mkdir();
-                File f = new File(".." + File.pathSeparator + "directory" + File.pathSeparator + "file.txt" );
-                return f;
-            }
+            File f = new File(".." + File.pathSeparator + "directory" + File.pathSeparator + "file.txt" );
+            return f;
             
         } catch( Exception e ){
             e.printStackTrace();

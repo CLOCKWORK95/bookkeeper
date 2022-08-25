@@ -40,6 +40,7 @@ public class TestDiskCheckerCheckDir {
     private boolean     isReadable;
     private boolean     isWritable;
     private boolean     isDirectory;
+    private boolean     isInvalid;
     private Object      expectedResult;
 
     // Data Structures
@@ -51,22 +52,26 @@ public class TestDiskCheckerCheckDir {
     public static Collection<Object[]> parameters(){
         return Arrays.asList(new Object[][]{
             // dirpath      isReadable      isWritable      isDirectory     expectedResult
-            // Test Suite (1)
-            {null,          true,       true,       true,       NullPointerException.class},
-            {"checkdir",    true,       true,       true,       true},
-            {"checkdir",    false,      true,       true,       DiskErrorException.class},
-            {"checkdir",    true,       false,      true,       DiskErrorException.class},
-            {"checkdir",    true,       true,       false,      DiskErrorException.class}
+            // Test Suite Minimale
+            {null,          true,       true,       true,       false,      NullPointerException.class},
+            {"checkdir",    true,       true,       true,       false,      true},
+            {"checkdir",    false,      true,       true,       false,      DiskErrorException.class},
+            {"checkdir",    true,       false,      true,       false,      DiskErrorException.class},
+            {"checkdir",    true,       true,       false,      false,      DiskErrorException.class},
+
+            {"../a/b/c/",   true,       true,       true,       true,       DiskErrorException.class},
+            {"\u0000",      true,       true,       true,       true,       DiskErrorException.class}
 
        });
    }
 
 
-    public TestDiskCheckerCheckDir(String dirPath, boolean isReadable, boolean isWritable, boolean isDirectory, Object expectedResult){
+    public TestDiskCheckerCheckDir(String dirPath, boolean isReadable, boolean isWritable, boolean isDirectory, boolean isInvalid, Object expectedResult){
         this.dirPath = dirPath;
         this.isReadable = isReadable;
         this.isWritable = isWritable;
         this.isDirectory = isDirectory;
+        this.isInvalid = isInvalid;
         this.expectedResult = expectedResult;
    }
 
@@ -75,7 +80,12 @@ public class TestDiskCheckerCheckDir {
     @Before 
     public void configure() throws IOException {   
         diskChecker = new DiskChecker(0.99f, 0.99f);
-        this.dir = directorySetup(this.dirPath);
+        if (isInvalid){
+            this.dir = new File(this.dirPath);
+        } else {
+            this.dir = directorySetup(this.dirPath);
+        }
+        
 
    }
 
