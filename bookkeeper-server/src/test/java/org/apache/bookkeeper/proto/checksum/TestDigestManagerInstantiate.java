@@ -47,7 +47,7 @@ public class TestDigestManagerInstantiate {
     public static Collection<Object[]> parameters(){
         return Arrays.asList(new Object[][] {
 
-			//  Test Suite (1)
+			//  Test Suite Minimale
             //  ledgerId        password        digestType            allocator                          useV2Protocol    expectedResult 
             {-1,    "password".getBytes(),      DigestType.HMAC,      UnpooledByteBufAllocator.DEFAULT,     false,              MacDigestManager.class},
             {0,     "password".getBytes(),      DigestType.CRC32,     UnpooledByteBufAllocator.DEFAULT,     true,               CRC32DigestManager.class},

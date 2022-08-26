@@ -55,13 +55,14 @@ public class TestDigestManagerVerifyDigestAndReturnData {
     public static Collection<Object[]> parameters() throws GeneralSecurityException{
         return Arrays.asList(new Object[][]{
             // digestType       ledgerId    entryId             byteBuffer              expectedResult
-            // Test suite (1)
+            // Test suite Minimale
             {DigestType.HMAC,      1,      0,      dataReceived(1, 0, DigestType.HMAC),        payloadBuffer()},
             {DigestType.CRC32,     1,      0,      dataReceived(1, 0, DigestType.DUMMY),       BKDigestMatchException.class},
             {DigestType.CRC32C,    1,      0,      dataReceived(1, 1, DigestType.CRC32C),      BKDigestMatchException.class},
             {DigestType.DUMMY,     1,      0,      dataReceived(0, 0, DigestType.DUMMY),       BKDigestMatchException.class},
-            //{DigestType.HMAC,      1,      0,      dataReceivedEmpty(),                                                            BKDigestMatchException.class},
-            {DigestType.CRC32,     1,      0,      null,                                                                           NullPointerException.class}
+            // Control Flow Coverage
+            {DigestType.HMAC,      1,      0,      Unpooled.buffer(),                                                        BKDigestMatchException.class},
+            {DigestType.CRC32,     1,      0,      null,                                                                     NullPointerException.class}
        });
     }
 
@@ -93,13 +94,12 @@ public class TestDigestManagerVerifyDigestAndReturnData {
 
 
     
-    private static ByteBuf dataReceived(int declaredLedgerId, int declaredEntryId, DigestType declaredDigestType) throws GeneralSecurityException {
-		DigestManager   digest = DigestManager.instantiate(declaredLedgerId, "password".getBytes(), declaredDigestType, UnpooledByteBufAllocator.DEFAULT, false);     
+    private static ByteBuf dataReceived(int actualLedgerId, int actualEntryId, DigestType actualDigestType) throws GeneralSecurityException {
+		DigestManager   digest = DigestManager.instantiate(actualLedgerId, "password".getBytes(), actualDigestType, UnpooledByteBufAllocator.DEFAULT, false);     
 		ByteBuf         payload = payloadBuffer();
-        ByteBufList     byteBufList = digest.computeDigestAndPackageForSending(declaredEntryId, 0,  payload.readableBytes(), payload);
+        ByteBufList     byteBufList = digest.computeDigestAndPackageForSending(actualEntryId, 0,  payload.readableBytes(), payload);
 		return ByteBufList.coalesce(byteBufList);
 	}
-
 
     private static ByteBuf payloadBuffer(){
         byte[]  data = text.getBytes();

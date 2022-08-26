@@ -53,12 +53,13 @@ public class TestDigestManagerVerifyDigestAndReturnLac {
         return Arrays.asList(new Object[][]{
             // digestType       ledgerId    lac             dataReceived byte buffer              expectedResult
             // Test suite (1)
-            {DigestType.HMAC,      1,     -1,      dataReceived(1, (long)-1, DigestType.HMAC),     (long)-1},
-            {DigestType.CRC32,     1,      0,      dataReceived(1, 0, DigestType.DUMMY),       BKDigestMatchException.class},
-            {DigestType.CRC32C,    1,      1,      dataReceived(1, 1, DigestType.CRC32C),      (long) 1},
-            {DigestType.DUMMY,     1,      0,      dataReceived(0, 0, DigestType.DUMMY),       BKDigestMatchException.class},
-            {DigestType.CRC32,     1,      0,      null,                                                             NullPointerException.class},
+            {DigestType.HMAC,      1,     -1,      dataReceived(1, (long)-1, DigestType.HMAC),                (long)-1},
+            {DigestType.CRC32,     1,      0,      dataReceived(1, 0, DigestType.DUMMY),                  BKDigestMatchException.class},
+            {DigestType.CRC32C,    1,      1,      dataReceived(1, 1, DigestType.CRC32C),                 (long) 1},
+            {DigestType.DUMMY,     1,      0,      dataReceived(0, 0, DigestType.DUMMY),                  BKDigestMatchException.class},
+            {DigestType.DUMMY,     1,      0,      dataReceived(0, 1, DigestType.DUMMY),                  BKDigestMatchException.class},
             // Control Flow Coverage
+            {DigestType.CRC32,     1,      0,      null,                                                                        NullPointerException.class},
             {DigestType.HMAC,      1,      1,      dataReceivedWrongPassword(1, (long)1, DigestType.HMAC),     BKDigestMatchException.class}
        });
    }
