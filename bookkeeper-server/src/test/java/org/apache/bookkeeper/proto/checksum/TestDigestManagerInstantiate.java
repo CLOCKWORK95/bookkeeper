@@ -53,8 +53,7 @@ public class TestDigestManagerInstantiate {
             {0,     "password".getBytes(),      DigestType.CRC32,     UnpooledByteBufAllocator.DEFAULT,     true,               CRC32DigestManager.class},
             {1,     "password".getBytes(),      DigestType.CRC32C,    null,                                 false,              CRC32CDigestManager.class},
             {1,     "".getBytes(),              DigestType.DUMMY,     UnpooledByteBufAllocator.DEFAULT,     true,               DummyDigestManager.class},
-            {1,     null,                       DigestType.HMAC,      UnpooledByteBufAllocator.DEFAULT,     false,              NullPointerException.class},
-            {1,     "password".getBytes(),      null,                 UnpooledByteBufAllocator.DEFAULT,     false,              NullPointerException.class}
+            {1,     null,                       DigestType.HMAC,      UnpooledByteBufAllocator.DEFAULT,     false,              NullPointerException.class}
 
 		});
     }
