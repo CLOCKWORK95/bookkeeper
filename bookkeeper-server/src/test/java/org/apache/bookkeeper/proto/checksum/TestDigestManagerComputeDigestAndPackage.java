@@ -48,7 +48,7 @@ public class TestDigestManagerComputeDigestAndPackage {
     private boolean         useV2Protocol;
 	private Object          expectedResult;
 	
-    // Data Structure instances
+    // //Data Structure instances
     private DigestManager   digestManager;
 	
 
